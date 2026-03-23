@@ -1,0 +1,97 @@
+name: MMCC
+options:
+  bundleIdPrefix: com.mmcc
+  deploymentTarget:
+    iOS: "26.0"
+  xcodeVersion: "26.3"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: 1
+    DEVELOPMENT_TEAM: A6H72TGWNL
+    SWIFT_STRICT_CONCURRENCY: complete
+
+targets:
+  MMCC:
+    type: application
+    platform: iOS
+    sources:
+      - path: .
+        excludes:
+          - "*.md"
+          - "*.yml"
+          - "project.yml"
+          - ".git/**"
+          - ".claude/**"
+          - ".playwright-mcp/**"
+          - "MMCCTests/**"
+          - "MMCCWidgets/**"
+          - "PocketBid.xcodeproj/**"
+          - "MMCC.xcodeproj/**"
+          - "MMCC/**"
+          - "Products/**"
+    info:
+      path: MMCC/Info.plist
+      properties:
+        CFBundleURLTypes:
+          - CFBundleURLSchemes: [mmcc]
+            CFBundleURLName: com.mmcc.app.oauth
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSContactsUsageDescription: "MMCC uses your contact card to auto-fill your business info during setup."
+        CFBundleDisplayName: MMCC
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mmcc.app
+    scheme:
+      testPlans: []
+      storeKitConfiguration: MMCC/MMCC.storekit
+    dependencies:
+      - target: MMCCWidgets
+    entitlements:
+      path: MMCC.entitlements
+      properties:
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.mmcc.app
+        com.apple.developer.icloud-services:
+          - CloudKit
+        com.apple.developer.ubiquity-kvstore-identifier: $(TeamIdentifierPrefix)com.mmcc.app
+        com.apple.security.application-groups:
+          - group.com.mmcc.app
+
+  MMCCWidgets:
+    type: app-extension
+    platform: iOS
+    product: "MMCCWidgets.appex"
+    sources:
+      - path: MMCCWidgets
+    info:
+      path: MMCCWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: MMCC Widgets
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mmcc.app.widgets
+        SKIP_INSTALL: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+    entitlements:
+      path: MMCCWidgets/MMCCWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.mmcc.app

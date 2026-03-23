@@ -1,0 +1,79 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcode-select -p)",
+      "Bash(xcodebuild -version)",
+      "Bash(xcodegen generate:*)",
+      "Bash(xcodebuild build:*)",
+      "Bash(open \"/Volumes/SAMSUNG 1TB/MMCC/MMCC.xcodeproj\")",
+      "Bash(du -sh \"$HOME/Library/Developer/Xcode/iOS DeviceSupport/iPad13,17 26.3 \\(23D127\\)\" \"$HOME/Library/Developer/Xcode/iOS DeviceSupport/iPhone15,4 26.3.1 \\(23D771330a\\)\")",
+      "Bash(du -sh \"$HOME/.Trash\")",
+      "Bash(find '/Volumes/SAMSUNG 1TB/MMCC' -name *Test* -o -name *test*)",
+      "Bash(claude mcp:*)",
+      "Bash(xcodebuild -project MMCC.xcodeproj -scheme MMCC -destination 'generic/platform=iOS' -quiet build)",
+      "Bash(xcodebuild -project MMCC.xcodeproj -scheme MMCC -destination 'generic/platform=iOS' -quiet build CODE_SIGNING_ALLOWED=NO)",
+      "Bash(sips -s format jpeg -s formatOptions 50 \"/Users/deegan4/Downloads/IMG_6072.HEIC\" --out \"/tmp/IMG_6072_preview.jpg\")",
+      "Read(//tmp/**)",
+      "Bash(sips -z 600 400 -s formatOptions 30 \"/tmp/IMG_6072_preview.jpg\" --out \"/tmp/IMG_6072_small.jpg\")",
+      "WebFetch(domain:www.morganmarinecc.com)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_run_code",
+      "Bash(curl -sL \"https://static.wixstatic.com/media/283239_e9d49f74ed7d419d86fc4bf299356a49~mv2.jpg/v1/fill/w_400,h_400,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/MMCC_logo_1_18_25.jpg\" -o \"/tmp/mmcc_logo_full.jpg\")",
+      "Bash(sips -g all \"/tmp/mmcc_logo_full.jpg\")",
+      "Bash(curl -sL \"https://static.wixstatic.com/media/306e82_bf4c3a7ae58943ad8a3b5d0c5ae8f543~mv2.jpg/v1/fill/w_1080,h_724,al_c,q_85,enc_avif,quality_auto/306e82_bf4c3a7ae58943ad8a3b5d0c5ae8f543~mv2.jpg\" -o \"/tmp/mmcc_hero.jpg\")",
+      "Bash(sips -g all \"/tmp/mmcc_hero.jpg\")",
+      "Bash(open \"/Volumes/SAMSUNG 1TB/MMCC/MMCC.xcodeproj\")",
+      "Bash(xcodebuild -project MMCC.xcodeproj -scheme MMCC -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build)",
+      "Bash(grep -rn '\\\\.wAmber\\\\|\\\\.wNavy\\\\|\\\\.wStatusSent\\\\|\\\\.wStatusAccepted\\\\|\\\\.wStatusOverdue\\\\|\\\\.wStatusDraft\\\\|\\\\.wStatusDeclined\\\\|\\\\.wNavyLight' MMCCWidgets/*.swift)",
+      "Bash(xcodegen --version)",
+      "Bash(xcodegen dump-spec:*)",
+      "Bash(xcodebuild clean:*)",
+      "Bash(grep -v \"^$\")",
+      "Read(//Users/deegan4/Library/Developer/Xcode/DerivedData/**)",
+      "Bash(ls \"/Volumes/SAMSUNG 1TB/MMCC/\"*.xcodeproj)",
+      "Bash(security find-identity:*)",
+      "mcp__plugin_serena_serena__list_memories",
+      "WebSearch",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__bc352a7b-1b5d-4f45-8bfe-27ca24e2f0a4__get_metadata",
+      "mcp__bc352a7b-1b5d-4f45-8bfe-27ca24e2f0a4__get_variable_defs"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_FILE_PATH\" | grep -q '\\.swift$'; then /Users/deegan4/.swiftly/bin/swift-format format -i \"$CLAUDE_FILE_PATH\" 2>/dev/null; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_FILE_PATH\" | grep -q '/Models/'; then cd \"/Volumes/SAMSUNG 1TB/MMCC\" && xcodebuild build -project MMCC.xcodeproj -scheme MMCC -destination 'generic/platform=iOS Simulator' -quiet 2>&1 | tail -5; fi",
+            "timeout": 120,
+            "statusMessage": "Building after model change..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_FILE_PATH\" | grep -qE '\\.(entitlements|pbxproj)$'; then echo 'BLOCKED: Do not edit entitlements or pbxproj directly. Use project.yml for project config changes.' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

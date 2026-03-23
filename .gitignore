@@ -1,0 +1,19 @@
+# Build
+build/
+DerivedData/
+
+# Xcode generated (project.yml is source of truth via XcodeGen)
+MMCC.xcodeproj/
+
+# Xcode user data
+*.xcuserdata
+*.xcworkspace
+
+# OS
+.DS_Store
+
+# Backup
+*.backup
+
+# Playwright MCP logs
+.playwright-mcp/
