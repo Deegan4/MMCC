@@ -135,7 +135,7 @@ struct TemplateEditorSheet: View {
     private var addSectionButton: some View {
         Section {
             Menu {
-                ForEach(MarineSection.allCases) { section in
+                ForEach(HVACSection.allCases) { section in
                     Button(section.displayName) {
                         let newSection = EditorSection(
                             name: section.displayName,

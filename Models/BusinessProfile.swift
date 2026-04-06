@@ -14,8 +14,7 @@ final class BusinessProfile {
     @Attribute(.externalStorage) var logoData: Data?
     var defaultTaxRate: Decimal = 0.0
     var defaultMarkup: Decimal = 0.0
-    var defaultPaymentTerms: PaymentTerms = PaymentTerms.thirdThirdThird
-    var defaultPermitJurisdiction: PermitJurisdiction = PermitJurisdiction.leeCounty
+    var defaultPaymentTerms: PaymentTerms = PaymentTerms.net30
     var defaultTerms: String = ""
     var defaultValidDays: Int = 30
     var qbConnected: Bool = false

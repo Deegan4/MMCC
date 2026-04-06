@@ -1,334 +1,327 @@
 import Foundation
 
-/// Marine construction job templates with real SW Florida pricing (2025-2026).
+/// HVAC job templates with real residential/commercial pricing (2025-2026).
 /// Contractor customizes to their market on first use.
-///
-/// Pricing sources: HomeGuide, The Hull Truth forums, Cape Coral contractor listings,
-/// industry averages for Lee/Charlotte/Collier County FL.
 enum SeedTemplates {
-    
+
     // MARK: - Template Definition Type
-    
+
     struct TemplateDef {
         let name: String
         let sections: [SectionDef]
         let defaultNotes: String
         let defaultTerms: String
     }
-    
+
     struct SectionDef {
         let name: String
         let items: [ItemDef]
     }
-    
+
     struct ItemDef {
         let description: String
         let qty: Decimal
         let price: Decimal
-        let unit: String // UnitType.abbreviation
+        let unit: String
     }
-    
+
     // MARK: - All Templates
-    
+
     static let all: [TemplateDef] = [
-        newDockWood,
-        newDockComposite,
-        seawallReplacementConcrete,
-        seawallReplacementVinyl,
-        boatLiftInstall16K,
-        boatLiftInstall10K,
-        dockRepairPilingReplacement,
-        seawallCapRepair,
-        floatingDock,
-        marineElectrical,
+        acReplacementBasic,
+        acReplacementPremium,
+        furnaceReplacement,
+        heatPumpConversion,
+        ductworkNewConstruction,
+        ductRepairAndSeal,
+        miniSplitMultiZone,
+        commercialRTU5Ton,
+        thermostatUpgrade,
+        refrigerantRecharge,
     ]
-    
+
     // ──────────────────────────────────────────
-    // 1. New Dock — Pressure Treated Wood
+    // 1. AC Replacement — Basic (14 SEER2)
     // ──────────────────────────────────────────
-    static let newDockWood = TemplateDef(
-        name: "New Dock — Pressure Treated Wood",
+    static let acReplacementBasic = TemplateDef(
+        name: "AC Replacement — 3-Ton 14 SEER2",
         sections: [
-            SectionDef(name: "Pilings / Foundation", items: [
-                ItemDef(description: "Pressure treated wood pilings, 8\" diameter, driven", qty: 8, price: 650, unit: "ea"),
-                ItemDef(description: "Piling caps — stainless steel", qty: 8, price: 35, unit: "ea"),
+            SectionDef(name: "Equipment", items: [
+                ItemDef(description: "3-ton 14 SEER2 condenser unit", qty: 1, price: 1800, unit: "ea"),
+                ItemDef(description: "Matching evaporator coil", qty: 1, price: 650, unit: "ea"),
+                ItemDef(description: "Standard thermostat", qty: 1, price: 125, unit: "ea"),
             ]),
-            SectionDef(name: "Decking / Framing", items: [
-                ItemDef(description: "Pressure treated 2x8 stringers", qty: 120, price: 8, unit: "LF"),
-                ItemDef(description: "Pressure treated 5/4x6 decking", qty: 400, price: 6, unit: "SF"),
-                ItemDef(description: "Stainless steel hardware package", qty: 1, price: 450, unit: "LS"),
-                ItemDef(description: "Dock cleats — 10\" aluminum", qty: 4, price: 65, unit: "ea"),
-                ItemDef(description: "Rub rail — vinyl", qty: 60, price: 12, unit: "LF"),
+            SectionDef(name: "Refrigerant & Piping", items: [
+                ItemDef(description: "R-410A refrigerant charge", qty: 1, price: 300, unit: "LS"),
+                ItemDef(description: "Line set — copper", qty: 25, price: 15, unit: "LF"),
             ]),
-            SectionDef(name: "Electrical / Lighting", items: [
-                ItemDef(description: "LED dock post lights", qty: 4, price: 125, unit: "ea"),
-                ItemDef(description: "Electrical run — conduit, wire, connections", qty: 1, price: 850, unit: "LS"),
-                ItemDef(description: "GFI outlet — weatherproof", qty: 2, price: 175, unit: "ea"),
+            SectionDef(name: "Electrical", items: [
+                ItemDef(description: "Disconnect and whip", qty: 1, price: 175, unit: "ea"),
+                ItemDef(description: "Electrical connections", qty: 1, price: 300, unit: "LS"),
             ]),
-            SectionDef(name: "Permits / Engineering", items: [
-                ItemDef(description: "Lee County dock permit", qty: 1, price: 500, unit: "ea"),
-                ItemDef(description: "Marine survey / engineering", qty: 1, price: 750, unit: "ea"),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Removal and disposal of old unit", qty: 1, price: 400, unit: "LS"),
+                ItemDef(description: "Installation labor", qty: 6, price: 90, unit: "hr"),
+                ItemDef(description: "Start-up and commissioning", qty: 1, price: 200, unit: "LS"),
             ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Barge mobilization and demobilization", qty: 1, price: 1500, unit: "LS"),
+            SectionDef(name: "Permits & Inspection", items: [
+                ItemDef(description: "Mechanical permit", qty: 1, price: 225, unit: "ea"),
             ]),
         ],
-        defaultNotes: "Scope: Remove existing dock (if applicable). Drive new pilings. Build new pressure treated wood dock per approved plans. Includes electrical as specified. Excludes seawall work, boat lift, and landscaping.\n\nTimeline: Approximately 2-3 weeks from permit approval.\n\nAll work performed per Lee County and FDEP requirements.",
-        defaultTerms: "Payment: 1/3 at contract signing, 1/3 at piling completion, 1/3 at final completion. Proposal valid for 30 days. Changes to scope will be documented as change orders. Contractor carries marine contractor insurance and general liability."
+        defaultNotes: "Scope: Replace existing AC condenser and evaporator coil. Includes refrigerant charge, thermostat, and electrical. Does not include ductwork or air handler.\n\nTimeline: 1 day installation.",
+        defaultTerms: "Payment: 50% deposit, 50% at completion. Proposal valid for 30 days. 10-year parts warranty. 1-year labor warranty."
     )
-    
+
     // ──────────────────────────────────────────
-    // 2. New Dock — Composite (Trex/similar)
+    // 2. AC Replacement — Premium (18+ SEER2)
     // ──────────────────────────────────────────
-    static let newDockComposite = TemplateDef(
-        name: "New Dock — Composite Decking",
+    static let acReplacementPremium = TemplateDef(
+        name: "AC Replacement — 3-Ton 18 SEER2 Variable Speed",
         sections: [
-            SectionDef(name: "Pilings / Foundation", items: [
-                ItemDef(description: "Pressure treated wood pilings, 8\" diameter, driven", qty: 8, price: 650, unit: "ea"),
-                ItemDef(description: "Piling caps — stainless steel", qty: 8, price: 35, unit: "ea"),
+            SectionDef(name: "Equipment", items: [
+                ItemDef(description: "3-ton 18 SEER2 variable-speed condenser", qty: 1, price: 3800, unit: "ea"),
+                ItemDef(description: "Variable-speed evaporator coil", qty: 1, price: 1200, unit: "ea"),
+                ItemDef(description: "Wi-Fi smart thermostat", qty: 1, price: 300, unit: "ea"),
+                ItemDef(description: "Surge protector", qty: 1, price: 125, unit: "ea"),
             ]),
-            SectionDef(name: "Decking / Framing", items: [
-                ItemDef(description: "Pressure treated 2x8 stringers", qty: 120, price: 8, unit: "LF"),
-                ItemDef(description: "Composite decking (Trex or equivalent)", qty: 400, price: 14, unit: "SF"),
-                ItemDef(description: "Hidden fastener system", qty: 400, price: 2, unit: "SF"),
-                ItemDef(description: "Composite fascia board", qty: 60, price: 18, unit: "LF"),
-                ItemDef(description: "Dock cleats — 10\" aluminum", qty: 4, price: 65, unit: "ea"),
-                ItemDef(description: "Rub rail — vinyl", qty: 60, price: 12, unit: "LF"),
+            SectionDef(name: "Refrigerant & Piping", items: [
+                ItemDef(description: "R-410A refrigerant charge", qty: 1, price: 400, unit: "LS"),
+                ItemDef(description: "Line set — insulated copper", qty: 30, price: 18, unit: "LF"),
+                ItemDef(description: "Condensate drain with safety switch", qty: 1, price: 150, unit: "LS"),
             ]),
-            SectionDef(name: "Electrical / Lighting", items: [
-                ItemDef(description: "LED dock post lights", qty: 4, price: 125, unit: "ea"),
-                ItemDef(description: "Electrical run — conduit, wire, connections", qty: 1, price: 850, unit: "LS"),
-                ItemDef(description: "GFI outlet — weatherproof", qty: 2, price: 175, unit: "ea"),
+            SectionDef(name: "Electrical", items: [
+                ItemDef(description: "Disconnect and whip", qty: 1, price: 185, unit: "ea"),
+                ItemDef(description: "Electrical connections", qty: 1, price: 400, unit: "LS"),
             ]),
-            SectionDef(name: "Permits / Engineering", items: [
-                ItemDef(description: "Lee County dock permit", qty: 1, price: 500, unit: "ea"),
-                ItemDef(description: "Marine survey / engineering", qty: 1, price: 750, unit: "ea"),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Old unit removal and disposal", qty: 1, price: 500, unit: "LS"),
+                ItemDef(description: "Installation labor", qty: 8, price: 95, unit: "hr"),
+                ItemDef(description: "Start-up, charge, and commissioning", qty: 1, price: 300, unit: "LS"),
             ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Barge mobilization and demobilization", qty: 1, price: 1500, unit: "LS"),
+            SectionDef(name: "Permits & Inspection", items: [
+                ItemDef(description: "Mechanical permit", qty: 1, price: 250, unit: "ea"),
+                ItemDef(description: "Manual J load calculation", qty: 1, price: 250, unit: "ea"),
             ]),
         ],
-        defaultNotes: "Scope: Remove existing dock (if applicable). Drive new pilings. Build new dock with composite decking per approved plans. Includes electrical as specified. Excludes seawall work, boat lift, and landscaping.\n\nComposite decking carries manufacturer's 25-year warranty.\n\nTimeline: Approximately 2-3 weeks from permit approval.",
-        defaultTerms: "Payment: 1/3 at contract signing, 1/3 at piling completion, 1/3 at final completion. Proposal valid for 30 days."
+        defaultNotes: "Scope: Premium AC replacement with variable-speed technology for maximum efficiency and comfort. Includes smart thermostat and surge protector.\n\nTimeline: 1 day installation.\n\nSEER2 rating qualifies for utility rebates — check with your power company.",
+        defaultTerms: "Payment: 50% deposit, 50% at completion. Proposal valid for 30 days. 10-year parts warranty. 1-year labor warranty."
     )
-    
+
     // ──────────────────────────────────────────
-    // 3. Seawall Replacement — Concrete
+    // 3. Furnace Replacement
     // ──────────────────────────────────────────
-    static let seawallReplacementConcrete = TemplateDef(
-        name: "Seawall Replacement — Poured Concrete",
+    static let furnaceReplacement = TemplateDef(
+        name: "Furnace Replacement — 80K BTU 96% AFUE",
         sections: [
-            SectionDef(name: "Demolition", items: [
-                ItemDef(description: "Remove existing seawall", qty: 80, price: 45, unit: "LF"),
-                ItemDef(description: "Debris removal and disposal", qty: 1, price: 2500, unit: "LS"),
+            SectionDef(name: "Equipment", items: [
+                ItemDef(description: "80K BTU 96% AFUE two-stage gas furnace", qty: 1, price: 2400, unit: "ea"),
+                ItemDef(description: "Programmable thermostat", qty: 1, price: 200, unit: "ea"),
             ]),
-            SectionDef(name: "Seawall / Bulkhead", items: [
-                ItemDef(description: "Poured concrete seawall — 6' height", qty: 80, price: 350, unit: "LF"),
-                ItemDef(description: "Steel rebar reinforcement", qty: 80, price: 25, unit: "LF"),
-                ItemDef(description: "Tiebacks / deadman anchors", qty: 10, price: 280, unit: "ea"),
-                ItemDef(description: "Concrete cap — 12\" wide", qty: 80, price: 35, unit: "LF"),
-                ItemDef(description: "Weep holes — PVC", qty: 16, price: 25, unit: "ea"),
+            SectionDef(name: "Materials & Supplies", items: [
+                ItemDef(description: "PVC flue venting", qty: 25, price: 16, unit: "LF"),
+                ItemDef(description: "Gas piping and connections", qty: 1, price: 400, unit: "LS"),
+                ItemDef(description: "Condensate drain and neutralizer", qty: 1, price: 150, unit: "LS"),
             ]),
-            SectionDef(name: "Backfill", items: [
-                ItemDef(description: "Clean fill / backfill material", qty: 60, price: 18, unit: "CY"),
-                ItemDef(description: "Compaction and grading", qty: 1, price: 1200, unit: "LS"),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Old furnace removal and disposal", qty: 1, price: 350, unit: "LS"),
+                ItemDef(description: "Installation labor", qty: 8, price: 90, unit: "hr"),
+                ItemDef(description: "Start-up and combustion analysis", qty: 1, price: 200, unit: "LS"),
             ]),
-            SectionDef(name: "Permits / Engineering", items: [
-                ItemDef(description: "Lee County seawall permit", qty: 1, price: 750, unit: "ea"),
-                ItemDef(description: "FDEP permit (if applicable)", qty: 1, price: 500, unit: "ea"),
-                ItemDef(description: "Engineering / structural plans", qty: 1, price: 2500, unit: "ea"),
-            ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Barge and equipment mobilization", qty: 1, price: 3500, unit: "LS"),
-                ItemDef(description: "Turbidity barrier", qty: 1, price: 800, unit: "LS"),
+            SectionDef(name: "Permits & Inspection", items: [
+                ItemDef(description: "Mechanical + gas permit", qty: 1, price: 300, unit: "ea"),
             ]),
         ],
-        defaultNotes: "Scope: Complete removal of existing seawall and replacement with new poured concrete seawall. Includes backfill, grading, and cap. Excludes dock work, landscaping, and irrigation repair.\n\nSeawall height: 6' (adjustable based on survey). Length: approximately 80 LF (verify with survey).\n\nTimeline: 4-6 weeks from permit approval.\n\nAll work meets or exceeds Lee County and FDEP requirements.",
-        defaultTerms: "Payment: 1/3 at contract signing, 1/3 at wall pour, 1/3 at final completion and backfill. Proposal valid for 30 days. Material prices subject to change if not accepted within 30 days."
-    )
-    
-    // ──────────────────────────────────────────
-    // 4. Seawall Replacement — Vinyl Sheet Pile
-    // ──────────────────────────────────────────
-    static let seawallReplacementVinyl = TemplateDef(
-        name: "Seawall Replacement — Vinyl Sheet Pile",
-        sections: [
-            SectionDef(name: "Demolition", items: [
-                ItemDef(description: "Remove existing seawall", qty: 80, price: 40, unit: "LF"),
-                ItemDef(description: "Debris removal and disposal", qty: 1, price: 2000, unit: "LS"),
-            ]),
-            SectionDef(name: "Seawall / Bulkhead", items: [
-                ItemDef(description: "Vinyl sheet pile — driven", qty: 80, price: 275, unit: "LF"),
-                ItemDef(description: "Concrete cap — poured", qty: 80, price: 45, unit: "LF"),
-                ItemDef(description: "Tiebacks / deadman anchors", qty: 10, price: 280, unit: "ea"),
-                ItemDef(description: "Return walls (if needed)", qty: 2, price: 850, unit: "ea"),
-            ]),
-            SectionDef(name: "Backfill", items: [
-                ItemDef(description: "Clean fill material", qty: 50, price: 18, unit: "CY"),
-                ItemDef(description: "Compaction and grading", qty: 1, price: 1000, unit: "LS"),
-            ]),
-            SectionDef(name: "Permits / Engineering", items: [
-                ItemDef(description: "County seawall permit", qty: 1, price: 750, unit: "ea"),
-                ItemDef(description: "Engineering plans", qty: 1, price: 2000, unit: "ea"),
-            ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Equipment mobilization", qty: 1, price: 3000, unit: "LS"),
-                ItemDef(description: "Turbidity barrier", qty: 1, price: 800, unit: "LS"),
-            ]),
-        ],
-        defaultNotes: "Scope: Remove existing seawall. Install new vinyl sheet pile seawall with concrete cap. Includes backfill. Excludes dock, landscaping, irrigation.\n\nVinyl sheet pile carries 50+ year expected lifespan.\n\nTimeline: 3-5 weeks from permit approval.",
-        defaultTerms: "Payment: 1/3 at signing, 1/3 at sheet pile completion, 1/3 at cap and backfill. Proposal valid for 30 days."
-    )
-    
-    // ──────────────────────────────────────────
-    // 5. Boat Lift Install — 16,000 lb
-    // ──────────────────────────────────────────
-    static let boatLiftInstall16K = TemplateDef(
-        name: "Boat Lift Installation — 16,000 lb",
-        sections: [
-            SectionDef(name: "Boat Lift", items: [
-                ItemDef(description: "16,000 lb capacity boat lift — aluminum", qty: 1, price: 12500, unit: "ea"),
-                ItemDef(description: "Boat lift motor — 12V DC", qty: 1, price: 1800, unit: "ea"),
-                ItemDef(description: "Bunks / cradle — custom fit", qty: 1, price: 650, unit: "ea"),
-                ItemDef(description: "Remote control", qty: 1, price: 350, unit: "ea"),
-            ]),
-            SectionDef(name: "Pilings / Foundation", items: [
-                ItemDef(description: "Lift pilings — 10\" pressure treated, driven", qty: 4, price: 750, unit: "ea"),
-            ]),
-            SectionDef(name: "Electrical / Lighting", items: [
-                ItemDef(description: "Lift electrical — dedicated circuit, GFI, wiring", qty: 1, price: 950, unit: "LS"),
-            ]),
-            SectionDef(name: "Permits / Engineering", items: [
-                ItemDef(description: "Lift permit", qty: 1, price: 350, unit: "ea"),
-            ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Delivery and installation", qty: 1, price: 1200, unit: "LS"),
-            ]),
-        ],
-        defaultNotes: "Scope: Supply and install 16,000 lb aluminum boat lift with 4 new pilings, motor, bunks, remote, and electrical. Customer to verify boat specs for cradle sizing.\n\nTimeline: 1-2 weeks from permit approval.",
-        defaultTerms: "Payment: 50% deposit at contract signing, 50% at completion. Proposal valid for 30 days. Lift carries manufacturer warranty."
-    )
-    
-    // ──────────────────────────────────────────
-    // 6. Boat Lift Install — 10,000 lb
-    // ──────────────────────────────────────────
-    static let boatLiftInstall10K = TemplateDef(
-        name: "Boat Lift Installation — 10,000 lb",
-        sections: [
-            SectionDef(name: "Boat Lift", items: [
-                ItemDef(description: "10,000 lb capacity boat lift — aluminum", qty: 1, price: 7500, unit: "ea"),
-                ItemDef(description: "Boat lift motor — 12V DC", qty: 1, price: 1500, unit: "ea"),
-                ItemDef(description: "Bunks / cradle", qty: 1, price: 450, unit: "ea"),
-                ItemDef(description: "Remote control", qty: 1, price: 350, unit: "ea"),
-            ]),
-            SectionDef(name: "Pilings / Foundation", items: [
-                ItemDef(description: "Lift pilings — 8\" pressure treated, driven", qty: 4, price: 650, unit: "ea"),
-            ]),
-            SectionDef(name: "Electrical / Lighting", items: [
-                ItemDef(description: "Lift electrical — dedicated circuit, GFI, wiring", qty: 1, price: 850, unit: "LS"),
-            ]),
-            SectionDef(name: "Permits / Engineering", items: [
-                ItemDef(description: "Lift permit", qty: 1, price: 350, unit: "ea"),
-            ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Delivery and installation", qty: 1, price: 1000, unit: "LS"),
-            ]),
-        ],
-        defaultNotes: "Scope: Supply and install 10,000 lb aluminum boat lift with 4 new pilings, motor, bunks, remote, and electrical.\n\nTimeline: 1-2 weeks from permit approval.",
-        defaultTerms: "Payment: 50% deposit, 50% at completion. Proposal valid for 30 days."
-    )
-    
-    // ──────────────────────────────────────────
-    // 7. Dock Repair — Piling Replacement
-    // ──────────────────────────────────────────
-    static let dockRepairPilingReplacement = TemplateDef(
-        name: "Dock Repair — Piling Replacement",
-        sections: [
-            SectionDef(name: "Pilings / Foundation", items: [
-                ItemDef(description: "Remove deteriorated piling", qty: 4, price: 350, unit: "ea"),
-                ItemDef(description: "New pressure treated piling — 8\" diameter, driven", qty: 4, price: 650, unit: "ea"),
-                ItemDef(description: "Piling caps — stainless", qty: 4, price: 35, unit: "ea"),
-            ]),
-            SectionDef(name: "Decking / Framing", items: [
-                ItemDef(description: "Re-attach / sister stringers at new pilings", qty: 4, price: 225, unit: "ea"),
-                ItemDef(description: "Replace damaged decking boards", qty: 20, price: 12, unit: "SF"),
-            ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Barge mobilization", qty: 1, price: 1200, unit: "LS"),
-            ]),
-        ],
-        defaultNotes: "Scope: Replace 4 deteriorated pilings. Re-attach existing dock framing to new pilings. Replace damaged decking in piling areas. Excludes full deck replacement, seawall work, and electrical.\n\nPiling count and condition to be verified on-site.",
-        defaultTerms: "Payment: 50% deposit, 50% at completion. Proposal valid for 30 days."
-    )
-    
-    // ──────────────────────────────────────────
-    // 8. Seawall Cap Repair
-    // ──────────────────────────────────────────
-    static let seawallCapRepair = TemplateDef(
-        name: "Seawall Cap Repair",
-        sections: [
-            SectionDef(name: "Seawall / Bulkhead", items: [
-                ItemDef(description: "Remove damaged concrete cap", qty: 40, price: 25, unit: "LF"),
-                ItemDef(description: "Pour new concrete cap — 12\" wide", qty: 40, price: 55, unit: "LF"),
-                ItemDef(description: "Rebar reinforcement", qty: 40, price: 12, unit: "LF"),
-                ItemDef(description: "Epoxy crack injection (if applicable)", qty: 10, price: 45, unit: "LF"),
-            ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Equipment mobilization (land-side)", qty: 1, price: 500, unit: "LS"),
-            ]),
-        ],
-        defaultNotes: "Scope: Remove and replace damaged seawall cap. Patch/epoxy existing wall cracks as needed. Excludes full seawall replacement, backfill, and dock work.\n\nActual linear footage to be confirmed on-site.",
-        defaultTerms: "Payment: 50% deposit, 50% at completion. Proposal valid for 30 days."
-    )
-    
-    // ──────────────────────────────────────────
-    // 9. Floating Dock Installation
-    // ──────────────────────────────────────────
-    static let floatingDock = TemplateDef(
-        name: "Floating Dock Installation",
-        sections: [
-            SectionDef(name: "Pilings / Foundation", items: [
-                ItemDef(description: "Guide pilings — 8\" pressure treated", qty: 4, price: 600, unit: "ea"),
-                ItemDef(description: "Piling sleeves / guides — HDPE", qty: 4, price: 120, unit: "ea"),
-            ]),
-            SectionDef(name: "Decking / Framing", items: [
-                ItemDef(description: "Floating dock section — 8' x 20' modular", qty: 2, price: 3500, unit: "ea"),
-                ItemDef(description: "Dock-to-shore gangway — 16' aluminum", qty: 1, price: 2800, unit: "ea"),
-                ItemDef(description: "Dock cleats — aluminum", qty: 4, price: 55, unit: "ea"),
-                ItemDef(description: "Bumpers / rub rail", qty: 8, price: 35, unit: "ea"),
-            ]),
-            SectionDef(name: "Permits / Engineering", items: [
-                ItemDef(description: "Dock permit", qty: 1, price: 500, unit: "ea"),
-            ]),
-            SectionDef(name: "Mobilization / Barge", items: [
-                ItemDef(description: "Delivery and installation", qty: 1, price: 1500, unit: "LS"),
-            ]),
-        ],
-        defaultNotes: "Scope: Install floating dock system with guide pilings and gangway. Dock sections are modular composite construction. Excludes seawall, boat lift, and electrical.\n\nFloating docks are ideal for areas with significant tidal change or fluctuating water levels.",
-        defaultTerms: "Payment: 50% deposit, 50% at completion. Proposal valid for 30 days."
-    )
-    
-    // ──────────────────────────────────────────
-    // 10. Marine Electrical — Shore Power
-    // ──────────────────────────────────────────
-    static let marineElectrical = TemplateDef(
-        name: "Marine Electrical — Shore Power + Lighting",
-        sections: [
-            SectionDef(name: "Electrical / Lighting", items: [
-                ItemDef(description: "Shore power pedestal — 30A/50A combo", qty: 1, price: 1200, unit: "ea"),
-                ItemDef(description: "Electrical run — panel to dock (UF cable in conduit)", qty: 1, price: 1800, unit: "LS"),
-                ItemDef(description: "Sub-panel at dock — 100A", qty: 1, price: 650, unit: "ea"),
-                ItemDef(description: "GFI breakers", qty: 4, price: 85, unit: "ea"),
-                ItemDef(description: "Weatherproof outlets", qty: 4, price: 145, unit: "ea"),
-                ItemDef(description: "LED dock lights — post mount", qty: 6, price: 125, unit: "ea"),
-                ItemDef(description: "LED underwater lights", qty: 2, price: 350, unit: "ea"),
-                ItemDef(description: "Photocell / timer for lighting", qty: 1, price: 85, unit: "ea"),
-            ]),
-            SectionDef(name: "Permits / Engineering", items: [
-                ItemDef(description: "Electrical permit", qty: 1, price: 250, unit: "ea"),
-            ]),
-        ],
-        defaultNotes: "Scope: Install shore power pedestal, dock sub-panel, outlets, and lighting as specified. Includes all wiring from main panel to dock. Excludes dock construction, seawall, and boat lift electrical.\n\nAll work per NEC and local code requirements. GFCI protection on all dock circuits.",
+        defaultNotes: "Scope: Replace existing furnace with new high-efficiency 96% AFUE gas furnace. Includes PVC venting, gas connections, and condensate drain. Does not include AC, ductwork, or gas line extension.\n\nTimeline: 1 day.",
         defaultTerms: "Payment: 50% deposit, 50% at completion and inspection. Proposal valid for 30 days."
+    )
+
+    // ──────────────────────────────────────────
+    // 4. Heat Pump Conversion
+    // ──────────────────────────────────────────
+    static let heatPumpConversion = TemplateDef(
+        name: "Heat Pump Conversion — 3-Ton",
+        sections: [
+            SectionDef(name: "Equipment", items: [
+                ItemDef(description: "3-ton heat pump condenser — 16 SEER2", qty: 1, price: 3200, unit: "ea"),
+                ItemDef(description: "Air handler with electric backup heat", qty: 1, price: 2200, unit: "ea"),
+                ItemDef(description: "Smart thermostat with heat pump control", qty: 1, price: 300, unit: "ea"),
+            ]),
+            SectionDef(name: "Refrigerant & Piping", items: [
+                ItemDef(description: "R-410A refrigerant charge", qty: 1, price: 400, unit: "LS"),
+                ItemDef(description: "Line set — insulated copper", qty: 30, price: 18, unit: "LF"),
+            ]),
+            SectionDef(name: "Electrical", items: [
+                ItemDef(description: "New breaker and wiring for heat pump", qty: 1, price: 550, unit: "LS"),
+                ItemDef(description: "Disconnect box", qty: 1, price: 175, unit: "ea"),
+            ]),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Old system removal and disposal", qty: 1, price: 600, unit: "LS"),
+                ItemDef(description: "Installation labor", qty: 12, price: 95, unit: "hr"),
+                ItemDef(description: "Start-up and commissioning", qty: 1, price: 300, unit: "LS"),
+            ]),
+            SectionDef(name: "Permits & Inspection", items: [
+                ItemDef(description: "Mechanical permit", qty: 1, price: 300, unit: "ea"),
+                ItemDef(description: "Manual J load calculation", qty: 1, price: 250, unit: "ea"),
+            ]),
+        ],
+        defaultNotes: "Scope: Convert from gas furnace/AC to electric heat pump system. Includes heat pump condenser, air handler with backup heat, smart thermostat, and new electrical circuit.\n\nMay qualify for federal tax credits and utility rebates.\n\nTimeline: 1-2 days.",
+        defaultTerms: "Payment: 1/3 at signing, 1/3 at rough-in, 1/3 at completion. Proposal valid for 30 days."
+    )
+
+    // ──────────────────────────────────────────
+    // 5. Ductwork — New Construction
+    // ──────────────────────────────────────────
+    static let ductworkNewConstruction = TemplateDef(
+        name: "Ductwork — New Construction 2,000 SF",
+        sections: [
+            SectionDef(name: "Ductwork", items: [
+                ItemDef(description: "Supply trunk line — galvanized metal", qty: 50, price: 28, unit: "LF"),
+                ItemDef(description: "Supply branch runs — insulated flex", qty: 180, price: 10, unit: "LF"),
+                ItemDef(description: "Return trunk — rigid metal", qty: 30, price: 25, unit: "LF"),
+                ItemDef(description: "Supply boots and fittings", qty: 12, price: 25, unit: "ea"),
+                ItemDef(description: "Supply registers", qty: 12, price: 30, unit: "ea"),
+                ItemDef(description: "Return air grilles (20x20)", qty: 3, price: 50, unit: "ea"),
+            ]),
+            SectionDef(name: "Insulation", items: [
+                ItemDef(description: "Duct sealing — mastic + UL tape", qty: 1, price: 500, unit: "LS"),
+            ]),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Rough-in installation — 2 technicians", qty: 16, price: 85, unit: "hr"),
+                ItemDef(description: "Trim-out (registers, grilles)", qty: 4, price: 85, unit: "hr"),
+                ItemDef(description: "Duct leakage test", qty: 1, price: 250, unit: "LS"),
+            ]),
+        ],
+        defaultNotes: "Scope: Complete ductwork installation for new construction, approximately 2,000 SF. Includes supply and return runs, registers, grilles, and duct sealing. Duct leakage test included for code compliance.\n\nCoordinated with general contractor schedule.",
+        defaultTerms: "Payment: 50% at rough-in, 50% at trim-out. Proposal valid for 30 days."
+    )
+
+    // ──────────────────────────────────────────
+    // 6. Duct Repair & Seal
+    // ──────────────────────────────────────────
+    static let ductRepairAndSeal = TemplateDef(
+        name: "Duct Repair & Sealing",
+        sections: [
+            SectionDef(name: "Ductwork", items: [
+                ItemDef(description: "Replace damaged flex duct sections", qty: 40, price: 12, unit: "LF"),
+                ItemDef(description: "Repair disconnected duct joints", qty: 4, price: 75, unit: "ea"),
+                ItemDef(description: "Replace crushed or torn duct boots", qty: 3, price: 45, unit: "ea"),
+            ]),
+            SectionDef(name: "Insulation", items: [
+                ItemDef(description: "Duct sealing — mastic on all accessible joints", qty: 1, price: 650, unit: "LS"),
+                ItemDef(description: "Re-insulate exposed ductwork", qty: 30, price: 6, unit: "LF"),
+            ]),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Diagnostic and duct inspection", qty: 1, price: 175, unit: "LS"),
+                ItemDef(description: "Repair labor", qty: 6, price: 85, unit: "hr"),
+                ItemDef(description: "Duct leakage test (before and after)", qty: 1, price: 250, unit: "LS"),
+            ]),
+        ],
+        defaultNotes: "Scope: Repair damaged and disconnected ductwork, seal all accessible joints with mastic, and re-insulate exposed sections. Before/after leakage test included to verify improvement.\n\nTimeline: 1 day.",
+        defaultTerms: "Payment: due at completion. Proposal valid for 30 days."
+    )
+
+    // ──────────────────────────────────────────
+    // 7. Mini-Split Multi-Zone
+    // ──────────────────────────────────────────
+    static let miniSplitMultiZone = TemplateDef(
+        name: "Mini-Split — 3-Zone Ductless System",
+        sections: [
+            SectionDef(name: "Equipment", items: [
+                ItemDef(description: "Multi-zone outdoor condenser (36K BTU)", qty: 1, price: 3200, unit: "ea"),
+                ItemDef(description: "Wall-mounted indoor head (12K BTU)", qty: 3, price: 650, unit: "ea"),
+                ItemDef(description: "Wireless remotes", qty: 3, price: 0, unit: "ea"),
+            ]),
+            SectionDef(name: "Refrigerant & Piping", items: [
+                ItemDef(description: "Line sets — pre-charged, insulated", qty: 75, price: 15, unit: "LF"),
+                ItemDef(description: "Line set covers (exterior)", qty: 30, price: 8, unit: "LF"),
+                ItemDef(description: "Condensate drain lines", qty: 3, price: 85, unit: "ea"),
+            ]),
+            SectionDef(name: "Electrical", items: [
+                ItemDef(description: "Dedicated circuit from panel", qty: 1, price: 550, unit: "LS"),
+                ItemDef(description: "Disconnect box", qty: 1, price: 125, unit: "ea"),
+            ]),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Installation labor — 2 technicians", qty: 12, price: 95, unit: "hr"),
+                ItemDef(description: "Wall penetrations and sealing (3)", qty: 3, price: 125, unit: "ea"),
+                ItemDef(description: "Start-up and commissioning", qty: 1, price: 250, unit: "LS"),
+            ]),
+            SectionDef(name: "Permits & Inspection", items: [
+                ItemDef(description: "Mechanical/electrical permit", qty: 1, price: 250, unit: "ea"),
+            ]),
+        ],
+        defaultNotes: "Scope: Install 3-zone ductless mini-split system with one outdoor unit and three wall-mounted indoor heads. Each zone independently controlled. Includes line sets with exterior covers, electrical, and condensate drains.\n\nTimeline: 1-2 days.",
+        defaultTerms: "Payment: 50% at equipment order, 50% at completion. Proposal valid for 30 days."
+    )
+
+    // ──────────────────────────────────────────
+    // 8. Commercial RTU — 5-Ton
+    // ──────────────────────────────────────────
+    static let commercialRTU5Ton = TemplateDef(
+        name: "Commercial RTU — 5-Ton Replacement",
+        sections: [
+            SectionDef(name: "Equipment", items: [
+                ItemDef(description: "5-ton commercial RTU — gas/electric", qty: 1, price: 5500, unit: "ea"),
+                ItemDef(description: "Roof curb adapter", qty: 1, price: 450, unit: "ea"),
+                ItemDef(description: "Commercial thermostat", qty: 1, price: 350, unit: "ea"),
+            ]),
+            SectionDef(name: "Materials & Supplies", items: [
+                ItemDef(description: "Gas piping connections", qty: 1, price: 400, unit: "LS"),
+                ItemDef(description: "Duct transitions", qty: 1, price: 550, unit: "LS"),
+                ItemDef(description: "Roof flashing", qty: 1, price: 300, unit: "LS"),
+            ]),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Crane rental", qty: 1, price: 1800, unit: "LS"),
+                ItemDef(description: "Old unit removal and disposal", qty: 1, price: 600, unit: "LS"),
+                ItemDef(description: "Installation labor", qty: 12, price: 100, unit: "hr"),
+                ItemDef(description: "Start-up and commissioning", qty: 1, price: 400, unit: "LS"),
+            ]),
+            SectionDef(name: "Permits & Inspection", items: [
+                ItemDef(description: "Commercial mechanical permit", qty: 1, price: 400, unit: "ea"),
+            ]),
+        ],
+        defaultNotes: "Scope: Replace existing rooftop unit with new 5-ton gas/electric RTU. Includes crane, roof curb, gas connections, and duct transitions.\n\nTimeline: 1 day.",
+        defaultTerms: "Payment: 50% deposit, 50% at completion. Proposal valid for 30 days."
+    )
+
+    // ──────────────────────────────────────────
+    // 9. Thermostat Upgrade
+    // ──────────────────────────────────────────
+    static let thermostatUpgrade = TemplateDef(
+        name: "Smart Thermostat Upgrade",
+        sections: [
+            SectionDef(name: "Equipment", items: [
+                ItemDef(description: "Smart thermostat (Ecobee/Honeywell/Nest)", qty: 1, price: 300, unit: "ea"),
+                ItemDef(description: "C-wire adapter (if needed)", qty: 1, price: 45, unit: "ea"),
+            ]),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Installation and wiring", qty: 1, price: 150, unit: "LS"),
+                ItemDef(description: "Wi-Fi setup and app configuration", qty: 1, price: 75, unit: "LS"),
+                ItemDef(description: "System test and calibration", qty: 1, price: 75, unit: "LS"),
+            ]),
+        ],
+        defaultNotes: "Scope: Replace existing thermostat with smart Wi-Fi thermostat. Includes wiring (C-wire adapter if needed), Wi-Fi setup, and app configuration on customer's phone.\n\nTimeline: 1-2 hours.",
+        defaultTerms: "Payment: due at completion. Proposal valid for 30 days."
+    )
+
+    // ──────────────────────────────────────────
+    // 10. Refrigerant Recharge & Leak Repair
+    // ──────────────────────────────────────────
+    static let refrigerantRecharge = TemplateDef(
+        name: "Refrigerant Recharge & Leak Repair",
+        sections: [
+            SectionDef(name: "Refrigerant & Piping", items: [
+                ItemDef(description: "R-410A refrigerant (per lb)", qty: 5, price: 65, unit: "lb"),
+                ItemDef(description: "Leak detection — electronic and UV dye", qty: 1, price: 175, unit: "LS"),
+                ItemDef(description: "Braze leak repair (per joint)", qty: 2, price: 185, unit: "ea"),
+            ]),
+            SectionDef(name: "Labor", items: [
+                ItemDef(description: "Diagnostic and system evaluation", qty: 1, price: 125, unit: "LS"),
+                ItemDef(description: "Repair labor", qty: 3, price: 95, unit: "hr"),
+                ItemDef(description: "Nitrogen pressure test", qty: 1, price: 150, unit: "LS"),
+                ItemDef(description: "Vacuum and recharge", qty: 1, price: 200, unit: "LS"),
+            ]),
+        ],
+        defaultNotes: "Scope: Locate refrigerant leak(s), repair via brazing, pressure test, evacuate, and recharge system to manufacturer specs. Refrigerant quantity estimated — actual amount billed at per-pound rate.\n\nIf evaporator or condenser coil replacement is needed, a separate proposal will be provided.",
+        defaultTerms: "Payment: due at completion. Proposal valid for 30 days. Repair warranty: 90 days parts and labor."
     )
 }

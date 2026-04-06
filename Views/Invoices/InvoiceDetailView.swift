@@ -143,14 +143,9 @@ struct InvoiceDetailView: View {
 
     private var jobSiteSection: some View {
         Group {
-            if !invoice.jobAddress.isEmpty || !invoice.waterway.isEmpty {
+            if !invoice.jobAddress.isEmpty {
                 Section("Job Site") {
-                    if !invoice.jobAddress.isEmpty {
-                        LabeledContent("Address", value: invoice.jobAddress)
-                    }
-                    if !invoice.waterway.isEmpty {
-                        LabeledContent("Waterway", value: invoice.waterway)
-                    }
+                    LabeledContent("Address", value: invoice.jobAddress)
                 }
             }
         }
@@ -268,7 +263,6 @@ struct InvoiceDetailView: View {
     private func markSent() {
         invoice.status = .sent
         invoice.sentAt = .now
-        // Set due date based on payment terms
         switch invoice.paymentTerms {
         case .dueOnReceipt: invoice.dueDate = .now
         case .net15: invoice.dueDate = Calendar.current.date(byAdding: .day, value: 15, to: .now)
@@ -277,7 +271,6 @@ struct InvoiceDetailView: View {
         case .net60: invoice.dueDate = Calendar.current.date(byAdding: .day, value: 60, to: .now)
         case .thirdThirdThird, .fiftyFifty: invoice.dueDate = Calendar.current.date(byAdding: .day, value: 30, to: .now)
         }
-        // Push to QuickBooks if connected (ADR-004: push-on-action)
         if let profile = profiles.first, profile.qbConnected {
             Task { await syncCoordinator?.syncInvoice(invoice) }
         }
@@ -408,14 +401,12 @@ struct RecordPaymentSheet: View {
         if invoice.payments == nil { invoice.payments = [] }
         invoice.payments?.append(payment)
 
-        // Update status
         if invoice.balanceDue - amount <= 0 {
             invoice.status = .paid
         } else {
             invoice.status = .partiallyPaid
         }
 
-        // Push payment to QuickBooks if connected
         if invoice.customer?.qbCustomerID != nil || invoice.qbInvoiceID != nil {
             Task { await syncCoordinator?.syncPayment(payment, invoice: invoice) }
         }

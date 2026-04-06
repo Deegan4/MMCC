@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Brand Colors
 
 extension Color {
-    // Primary brand — warm terracotta inspired by PasangLagi, adapted for marine
+    // Primary brand — warm terracotta inspired by PasangLagi, adapted for HVAC
     static let mmccNavy = Color(red: 18 / 255, green: 32 / 255, blue: 47 / 255)
     static let mmccNavyLight = Color(red: 28 / 255, green: 48 / 255, blue: 68 / 255)
     static let mmccNavyMid = Color(red: 38 / 255, green: 62 / 255, blue: 88 / 255)

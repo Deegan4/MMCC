@@ -55,8 +55,8 @@ struct WidgetSnapshot: Codable {
             totalJobs: 8,
             overdueCount: 1,
             activeProposals: [
-                WidgetProposal(title: "Dock Build", customerName: "J. Smith", amount: "$8,200", statusRaw: "sent", number: 1),
-                WidgetProposal(title: "Seawall Repair", customerName: "R. Davis", amount: "$4,300", statusRaw: "draft", number: 2),
+                WidgetProposal(title: "AC Replacement", customerName: "J. Smith", amount: "$8,200", statusRaw: "sent", number: 1),
+                WidgetProposal(title: "Duct Repair", customerName: "R. Davis", amount: "$4,300", statusRaw: "draft", number: 2),
             ],
             unpaidInvoices: [
                 WidgetInvoice(customerName: "T. Wilson", balanceDue: "$6,500", statusRaw: "sent", number: 1, isOverdue: false),

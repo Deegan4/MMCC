@@ -9,12 +9,9 @@ final class Customer {
     var email: String = ""
     var address: String = ""
     var notes: String = ""
-    var waterway: String = ""
-    var waterwayType: WaterwayType?
-    var existingSeawallType: SeawallType?
-    var waterDepthFeet: Decimal?
-    var isTidal: Bool = false
-    var permitJurisdiction: PermitJurisdiction?
+    var propertyType: PropertyType?
+    var existingSystemType: SystemType?
+    var squareFootage: Int?
     var qbCustomerID: String?
     @Relationship(deleteRule: .cascade, inverse: \Proposal.customer) var proposals: [Proposal]?
     @Relationship(deleteRule: .cascade, inverse: \Invoice.customer) var invoices: [Invoice]?

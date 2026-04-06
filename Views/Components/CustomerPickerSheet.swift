@@ -26,8 +26,8 @@ struct CustomerPickerSheet: View {
                                     Text(customer.name)
                                         .font(.body.bold())
                                         .foregroundStyle(.primary)
-                                    if !customer.waterway.isEmpty {
-                                        Text(customer.waterway)
+                                    if !customer.address.isEmpty {
+                                        Text(customer.address)
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                     }

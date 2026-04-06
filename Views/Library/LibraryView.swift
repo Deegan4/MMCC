@@ -174,8 +174,8 @@ struct LibraryView: View {
             ForEach(customers) { customer in
                 VStack(alignment: .leading) {
                     Text(customer.name).font(.body.bold())
-                    if !customer.waterway.isEmpty {
-                        Text(customer.waterway)
+                    if !customer.address.isEmpty {
+                        Text(customer.address)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

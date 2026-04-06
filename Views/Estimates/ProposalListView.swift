@@ -80,7 +80,7 @@ struct ProposalListView: View {
         }
     }
 
-    // MARK: - Filter Bar (PasangLagi-style segmented tabs)
+    // MARK: - Filter Bar
 
     private var statusFilterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -113,7 +113,7 @@ struct ProposalListView: View {
             Text("No Proposals Yet")
                 .font(.title3.weight(.semibold))
 
-            Text("Create your first proposal from a\nmarine template or start from scratch")
+            Text("Create your first proposal from an\nHVAC template or start from scratch")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -178,14 +178,13 @@ struct ProposalListView: View {
     }
 }
 
-// MARK: - Proposal List Card (PasangLagi-style project card with metrics)
+// MARK: - Proposal List Card
 
 struct ProposalListCard: View {
     let proposal: Proposal
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Top: number + status
             HStack {
                 Text("P-\(String(format: "%03d", proposal.number))")
                     .font(.caption.weight(.semibold))
@@ -194,7 +193,6 @@ struct ProposalListCard: View {
                 StatusBadge(text: proposal.status.displayName, color: proposal.status.color)
             }
 
-            // Title + customer
             VStack(alignment: .leading, spacing: 2) {
                 Text(proposal.title.isEmpty ? "Untitled Proposal" : proposal.title)
                     .font(.body.weight(.semibold))
@@ -209,7 +207,6 @@ struct ProposalListCard: View {
                 .foregroundStyle(.secondary)
             }
 
-            // Metrics row (PasangLagi-style)
             HStack(spacing: 8) {
                 MetricBadge(
                     value: "\(proposal.sortedSections.count)",
@@ -228,7 +225,6 @@ struct ProposalListCard: View {
                 )
             }
 
-            // Date row
             HStack {
                 Text(proposal.updatedAt, style: .date)
                     .font(.caption2)

@@ -67,7 +67,7 @@ struct GlobalSearchView: View {
         ContentUnavailableView {
             Label("Search Everything", systemImage: "magnifyingglass")
         } description: {
-            Text("Find proposals, invoices, customers, and library items by name, number, address, or waterway.")
+            Text("Find proposals, invoices, customers, and library items by name, number, or address.")
         }
     }
 
@@ -120,7 +120,7 @@ struct GlobalSearchView: View {
                         iconColor: .mmccAmber,
                         title: customer.name,
                         subtitle: [customer.phone, customer.email].filter { !$0.isEmpty }.joined(separator: " · "),
-                        detail: customer.waterway.isEmpty ? nil : customer.waterway
+                        detail: customer.address.isEmpty ? nil : customer.address
                     )
                 }
             }
@@ -159,7 +159,7 @@ struct GlobalSearchView: View {
 
         let q = trimmed.localizedLowercase
 
-        // Proposals: search title, customer name, job address, waterway, number
+        // Proposals: search title, customer name, job address, number
         do {
             let descriptor = FetchDescriptor<Proposal>(sortBy: [SortDescriptor(\.updatedAt, order: .reverse)])
             let all = try modelContext.fetch(descriptor)
@@ -167,7 +167,6 @@ struct GlobalSearchView: View {
                 proposal.title.localizedCaseInsensitiveContains(q)
                 || proposal.customer?.name.localizedCaseInsensitiveContains(q) == true
                 || proposal.jobAddress.localizedCaseInsensitiveContains(q)
-                || proposal.waterway.localizedCaseInsensitiveContains(q)
                 || "p-\(String(format: "%03d", proposal.number))".contains(q)
                 || proposal.notes.localizedCaseInsensitiveContains(q)
             }
@@ -181,11 +180,11 @@ struct GlobalSearchView: View {
                 "inv-\(String(format: "%03d", invoice.number))".contains(q)
                 || invoice.customer?.name.localizedCaseInsensitiveContains(q) == true
                 || invoice.jobAddress.localizedCaseInsensitiveContains(q)
-                || invoice.waterway.localizedCaseInsensitiveContains(q)
+                || invoice.notes.localizedCaseInsensitiveContains(q)
             }
         } catch { invoiceResults = [] }
 
-        // Customers: search name, phone, email, address, waterway
+        // Customers: search name, phone, email, address
         do {
             let descriptor = FetchDescriptor<Customer>(sortBy: [SortDescriptor(\.name)])
             let all = try modelContext.fetch(descriptor)
@@ -194,7 +193,7 @@ struct GlobalSearchView: View {
                 || customer.phone.localizedCaseInsensitiveContains(q)
                 || customer.email.localizedCaseInsensitiveContains(q)
                 || customer.address.localizedCaseInsensitiveContains(q)
-                || customer.waterway.localizedCaseInsensitiveContains(q)
+                || customer.notes.localizedCaseInsensitiveContains(q)
             }
         } catch { customerResults = [] }
 
@@ -273,22 +272,16 @@ struct CustomerSearchDetailView: View {
                 }
             }
 
-            if !customer.waterway.isEmpty || customer.waterwayType != nil || customer.existingSeawallType != nil {
-                Section("Waterfront") {
-                    if !customer.waterway.isEmpty {
-                        LabeledContent("Waterway", value: customer.waterway)
+            if customer.existingSystemType != nil || customer.propertyType != nil || customer.squareFootage != nil {
+                Section("Property Details") {
+                    if let type = customer.propertyType {
+                        LabeledContent("Property Type", value: type.displayName)
                     }
-                    if let type = customer.waterwayType {
-                        LabeledContent("Type", value: type.displayName)
+                    if let system = customer.existingSystemType {
+                        LabeledContent("System Type", value: system.displayName)
                     }
-                    if let seawall = customer.existingSeawallType {
-                        LabeledContent("Seawall", value: seawall.displayName)
-                    }
-                    if let depth = customer.waterDepthFeet {
-                        LabeledContent("Water Depth", value: "\(depth.formatted()) ft")
-                    }
-                    if customer.isTidal {
-                        Label("Tidal", systemImage: "water.waves")
+                    if let sqft = customer.squareFootage {
+                        LabeledContent("Square Footage", value: "\(sqft) sqft")
                     }
                 }
             }

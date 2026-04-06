@@ -119,9 +119,9 @@ struct DashboardView: View {
 
     private var featureGrid: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
-            FeatureGridButton(title: "New Bid", icon: "plus.circle.fill", tint: .mmccAmber) {}
+            FeatureGridButton(title: "New Job", icon: "plus.circle.fill", tint: .mmccAmber) {}
             FeatureGridButton(title: "Customers", icon: "person.2.fill", tint: .statusSent) {}
-            FeatureGridButton(title: "Materials", icon: "shippingbox.fill", tint: .statusAccepted) {}
+            FeatureGridButton(title: "Parts", icon: "wrench.and.screwdriver.fill", tint: .statusAccepted) {}
             FeatureGridButton(title: "Templates", icon: "doc.on.doc.fill", tint: .statusInvoiced) {}
         }
         .padding(16)

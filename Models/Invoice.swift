@@ -8,7 +8,6 @@ final class Invoice {
     var status: InvoiceStatus = InvoiceStatus.draft
     var customer: Customer?
     var jobAddress: String = ""
-    var waterway: String = ""
     var paymentTerms: PaymentTerms = PaymentTerms.dueOnReceipt
     var dueDate: Date?
     var taxRate: Decimal = 0.0

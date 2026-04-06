@@ -19,7 +19,7 @@ struct TemplatePickerSheet: View {
         NavigationStack {
             List {
                 if !systemTemplates.isEmpty {
-                    Section("Marine Templates") {
+                    Section("HVAC Templates") {
                         ForEach(systemTemplates) { template in
                             templateRow(template)
                         }

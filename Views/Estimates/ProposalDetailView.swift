@@ -150,20 +150,25 @@ struct ProposalDetailView: View {
     }
 
     private var jobSiteSection: some View {
-        Section("Job Site") {
+        Section("Job Details") {
             TextField("Job Address", text: $proposal.jobAddress)
                 .textContentType(.fullStreetAddress)
-            TextField("Waterway Name", text: $proposal.waterway)
-            Picker("Waterway Type", selection: $proposal.waterwayType) {
-                Text("Not Set").tag(WaterwayType?.none)
-                ForEach(WaterwayType.allCases) { type in
+            Picker("System Type", selection: $proposal.systemType) {
+                Text("Not Set").tag(SystemType?.none)
+                ForEach(SystemType.allCases) { type in
                     Text(type.displayName).tag(Optional(type))
                 }
             }
-            Picker("Permit Jurisdiction", selection: $proposal.permitJurisdiction) {
-                Text("Not Set").tag(PermitJurisdiction?.none)
-                ForEach(PermitJurisdiction.allCases) { j in
-                    Text(j.displayName).tag(Optional(j))
+            Picker("Service Type", selection: $proposal.serviceType) {
+                Text("Not Set").tag(ServiceType?.none)
+                ForEach(ServiceType.allCases) { type in
+                    Text(type.displayName).tag(Optional(type))
+                }
+            }
+            Picker("Property Type", selection: $proposal.propertyType) {
+                Text("Not Set").tag(PropertyType?.none)
+                ForEach(PropertyType.allCases) { type in
+                    Text(type.displayName).tag(Optional(type))
                 }
             }
         }
@@ -172,7 +177,7 @@ struct ProposalDetailView: View {
     private var addSectionButton: some View {
         Section {
             Menu {
-                ForEach(MarineSection.allCases) { section in
+                ForEach(HVACSection.allCases) { section in
                     Button(section.displayName) {
                         addSection(named: section.displayName, sortOrder: section.defaultSortOrder)
                     }
@@ -271,8 +276,6 @@ struct ProposalDetailView: View {
         let _ = "P-\(String(format: "%03d", proposal.number)) \(proposal.title.isEmpty ? "Proposal" : proposal.title).pdf"
 
         Task {
-            // Google Drive client would be injected via environment in production
-            // For now, this shows the pattern
             driveUploading = false
             showingDriveUploadSuccess = true
         }
@@ -281,7 +284,6 @@ struct ProposalDetailView: View {
     private func markSent() {
         proposal.status = .sent
         proposal.sentAt = .now
-        // Push to QuickBooks if connected (ADR-004: push-on-action)
         if let profile = profiles.first, profile.qbConnected {
             Task { await syncCoordinator?.syncProposal(proposal) }
         }
@@ -295,13 +297,12 @@ struct ProposalDetailView: View {
         copy.markup = proposal.markup
         copy.taxRate = proposal.taxRate
         copy.jobAddress = proposal.jobAddress
-        copy.waterway = proposal.waterway
-        copy.waterwayType = proposal.waterwayType
-        copy.permitJurisdiction = proposal.permitJurisdiction
+        copy.systemType = proposal.systemType
+        copy.serviceType = proposal.serviceType
+        copy.propertyType = proposal.propertyType
         copy.customer = proposal.customer
         copy.sourceTemplateName = proposal.sourceTemplateName
 
-        // Find next proposal number
         let maxNumber = (try? modelContext.fetch(FetchDescriptor<Proposal>()))?.map(\.number).max() ?? 0
         copy.number = maxNumber + 1
 
@@ -330,25 +331,21 @@ struct ProposalDetailView: View {
     private func convertToInvoice() {
         let invoice = Invoice()
 
-        // Find next invoice number
         let maxNumber = allInvoices.map(\.number).max() ?? 0
         invoice.number = maxNumber + 1
 
         invoice.customer = proposal.customer
         invoice.jobAddress = proposal.jobAddress
-        invoice.waterway = proposal.waterway
         invoice.taxRate = proposal.taxRate
         invoice.notes = proposal.notes
         invoice.terms = proposal.terms
         invoice.sourceProposalID = proposal.id
 
-        // Copy sections and line items
         for section in proposal.sortedSections {
             let invoiceSection = InvoiceSection(name: section.name, sortOrder: section.sortOrder)
             for item in section.sortedLineItems {
                 let invoiceItem = InvoiceLineItem()
                 invoiceItem.itemDescription = item.itemDescription
-                // Apply markup to unit prices
                 let markupMultiplier = proposal.markup > 0 ? (1 + proposal.markup / 100) : 1
                 invoiceItem.unitPrice = item.unitPrice * markupMultiplier
                 invoiceItem.quantity = item.quantity

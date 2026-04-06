@@ -9,9 +9,9 @@ final class Proposal {
     var status: ProposalStatus = ProposalStatus.draft
     var customer: Customer?
     var jobAddress: String = ""
-    var waterway: String = ""
-    var waterwayType: WaterwayType?
-    var permitJurisdiction: PermitJurisdiction?
+    var systemType: SystemType?
+    var serviceType: ServiceType?
+    var propertyType: PropertyType?
     var markup: Decimal = 0.0
     var taxRate: Decimal = 0.0
     var notes: String = ""

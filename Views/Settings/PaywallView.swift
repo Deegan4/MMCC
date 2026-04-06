@@ -43,7 +43,7 @@ struct PaywallView: View {
             Text("Unlock MMCC Pro")
                 .font(.title2.weight(.bold))
 
-            Text("Unlimited proposals, invoices, and QuickBooks sync for your marine business.")
+            Text("Unlimited proposals, invoices, and QuickBooks sync for your HVAC business.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

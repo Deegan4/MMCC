@@ -32,7 +32,7 @@ struct MMCCShortcutsProvider: AppShortcutsProvider {
             phrases: [
                 "Create a new estimate in \(.applicationName)",
                 "New proposal in \(.applicationName)",
-                "Start a dock estimate in \(.applicationName)",
+                "Start an HVAC estimate in \(.applicationName)",
             ],
             shortTitle: "New Proposal",
             systemImageName: "plus.circle"

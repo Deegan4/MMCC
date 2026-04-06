@@ -89,7 +89,6 @@ struct SettingsView: View {
             LabeledContent("Markup", value: "\(profile.defaultMarkup)%")
             LabeledContent("Valid Days", value: "\(profile.defaultValidDays)")
             LabeledContent("Payment Terms", value: profile.defaultPaymentTerms.displayName)
-            LabeledContent("Jurisdiction", value: profile.defaultPermitJurisdiction.displayName)
         }
     }
 
@@ -334,7 +333,7 @@ struct SettingsView: View {
     private var aboutSection: some View {
         Section("About") {
             LabeledContent("Version", value: "1.0.0")
-            LabeledContent("Built for", value: "Marine Contractors")
+            LabeledContent("Built for", value: "HVAC Contractors")
         }
     }
 
@@ -390,8 +389,7 @@ struct BusinessProfileEditorSheet: View {
     @State private var defaultTaxRate: Decimal = 0
     @State private var defaultMarkup: Decimal = 0
     @State private var defaultValidDays: Int = 30
-    @State private var defaultPaymentTerms: PaymentTerms = .thirdThirdThird
-    @State private var defaultPermitJurisdiction: PermitJurisdiction = .leeCounty
+    @State private var defaultPaymentTerms: PaymentTerms = .net30
     @State private var defaultTerms: String = ""
 
     var body: some View {
@@ -452,11 +450,6 @@ struct BusinessProfileEditorSheet: View {
                             Text(terms.displayName).tag(terms)
                         }
                     }
-                    Picker("Jurisdiction", selection: $defaultPermitJurisdiction) {
-                        ForEach(PermitJurisdiction.allCases) { j in
-                            Text(j.displayName).tag(j)
-                        }
-                    }
                 }
 
                 Section("Default Terms") {
@@ -491,7 +484,6 @@ struct BusinessProfileEditorSheet: View {
         defaultMarkup = profile.defaultMarkup
         defaultValidDays = profile.defaultValidDays
         defaultPaymentTerms = profile.defaultPaymentTerms
-        defaultPermitJurisdiction = profile.defaultPermitJurisdiction
         defaultTerms = profile.defaultTerms
     }
 
@@ -508,7 +500,6 @@ struct BusinessProfileEditorSheet: View {
         profile.defaultMarkup = defaultMarkup
         profile.defaultValidDays = defaultValidDays
         profile.defaultPaymentTerms = defaultPaymentTerms
-        profile.defaultPermitJurisdiction = defaultPermitJurisdiction
         profile.defaultTerms = defaultTerms
         dismiss()
     }

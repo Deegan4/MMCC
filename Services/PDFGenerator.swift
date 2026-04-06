@@ -37,7 +37,7 @@ enum PDFGenerator {
             of: "</body></html>",
             with: """
             <div style="text-align: center; margin-top: 24px; padding-top: 12px; border-top: 1px solid #eee;">
-                <p style="font-size: 9px; color: #999; letter-spacing: 1px;">Powered by MMCC &mdash; Marine Contractor Estimates</p>
+                <p style="font-size: 9px; color: #999; letter-spacing: 1px;">Powered by MMCC &mdash; HVAC Contractor Estimates</p>
             </div>
             </body></html>
             """
@@ -116,12 +116,13 @@ enum PDFGenerator {
             """
         }
 
-        // Job site
-        if !proposal.jobAddress.isEmpty || !proposal.waterway.isEmpty {
-            html += "<div class='jobsite'><h3>Job Site:</h3>"
+        // Job details
+        if !proposal.jobAddress.isEmpty || proposal.systemType != nil || proposal.serviceType != nil {
+            html += "<div class='jobsite'><h3>Job Details:</h3>"
             if !proposal.jobAddress.isEmpty { html += "<p>\(esc(proposal.jobAddress))</p>" }
-            if !proposal.waterway.isEmpty { html += "<p>Waterway: \(esc(proposal.waterway))</p>" }
-            if let wt = proposal.waterwayType { html += "<p>Type: \(wt.displayName)</p>" }
+            if let st = proposal.systemType { html += "<p>System: \(st.displayName)</p>" }
+            if let svc = proposal.serviceType { html += "<p>Service: \(svc.displayName)</p>" }
+            if let pt = proposal.propertyType { html += "<p>Property: \(pt.displayName)</p>" }
             html += "</div>"
         }
 
@@ -213,10 +214,9 @@ enum PDFGenerator {
         }
 
         // Job site
-        if !invoice.jobAddress.isEmpty || !invoice.waterway.isEmpty {
+        if !invoice.jobAddress.isEmpty {
             html += "<div class='jobsite'><h3>Job Site:</h3>"
-            if !invoice.jobAddress.isEmpty { html += "<p>\(esc(invoice.jobAddress))</p>" }
-            if !invoice.waterway.isEmpty { html += "<p>Waterway: \(esc(invoice.waterway))</p>" }
+            html += "<p>\(esc(invoice.jobAddress))</p>"
             html += "</div>"
         }
 

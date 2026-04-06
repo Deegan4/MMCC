@@ -1,139 +1,149 @@
 import Foundation
 
-// MARK: - Marine Section Category
+// MARK: - HVAC Section Category
 
-enum MarineSection: String, Codable, CaseIterable, Identifiable {
-    case pilings
-    case framingStructure
-    case decking
-    case seawall
-    case boatLift
+enum HVACSection: String, Codable, CaseIterable, Identifiable {
+    case equipment
+    case ductwork
+    case refrigerant
     case electrical
-    case accessories
-    case permitsEngineering
-    case siteWork
+    case controls
+    case insulation
+    case permits
     case labor
+    case materials
     case other
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .pilings: "Pilings"
-        case .framingStructure: "Framing & Structure"
-        case .decking: "Decking"
-        case .seawall: "Seawall"
-        case .boatLift: "Boat Lift"
+        case .equipment: "Equipment"
+        case .ductwork: "Ductwork"
+        case .refrigerant: "Refrigerant & Piping"
         case .electrical: "Electrical"
-        case .accessories: "Accessories"
-        case .permitsEngineering: "Permits & Engineering"
-        case .siteWork: "Site Work"
+        case .controls: "Controls & Thermostats"
+        case .insulation: "Insulation"
+        case .permits: "Permits & Inspection"
         case .labor: "Labor"
+        case .materials: "Materials & Supplies"
         case .other: "Other"
         }
     }
 
     var iconName: String {
         switch self {
-        case .pilings: "arrow.down.to.line"
-        case .framingStructure: "square.grid.3x3.topleft.filled"
-        case .decking: "rectangle.split.3x3.fill"
-        case .seawall: "water.waves"
-        case .boatLift: "arrow.up.square"
+        case .equipment: "fan.fill"
+        case .ductwork: "wind"
+        case .refrigerant: "snowflake"
         case .electrical: "bolt.fill"
-        case .accessories: "wrench.and.screwdriver.fill"
-        case .permitsEngineering: "doc.text.fill"
-        case .siteWork: "shovel.fill"
+        case .controls: "thermometer.medium"
+        case .insulation: "square.stack.3d.up.fill"
+        case .permits: "doc.text.fill"
         case .labor: "person.fill"
+        case .materials: "shippingbox.fill"
         case .other: "ellipsis.circle.fill"
         }
     }
 
     var defaultSortOrder: Int {
         switch self {
-        case .siteWork: 0
-        case .pilings: 1
-        case .seawall: 2
-        case .framingStructure: 3
-        case .decking: 4
-        case .boatLift: 5
-        case .electrical: 6
-        case .accessories: 7
-        case .labor: 8
-        case .permitsEngineering: 9
-        case .other: 10
+        case .equipment: 0
+        case .ductwork: 1
+        case .refrigerant: 2
+        case .electrical: 3
+        case .controls: 4
+        case .insulation: 5
+        case .materials: 6
+        case .labor: 7
+        case .permits: 8
+        case .other: 9
         }
     }
 }
 
-// MARK: - Waterway Type
+// MARK: - HVAC System Type
 
-enum WaterwayType: String, Codable, CaseIterable, Identifiable {
-    case canal
-    case river
-    case intercoastal
-    case openWater
-    case lake
-    case bay
+enum SystemType: String, Codable, CaseIterable, Identifiable {
+    case centralSplit
+    case packageUnit
+    case miniSplit
+    case ductlessMiniSplit
+    case heatPump
+    case furnace
+    case boiler
+    case geothermal
+    case ptac
+    case vrf
     case other
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .canal: "Canal"
-        case .river: "River"
-        case .intercoastal: "Intercoastal"
-        case .openWater: "Open Water"
-        case .lake: "Lake"
-        case .bay: "Bay"
+        case .centralSplit: "Central Split System"
+        case .packageUnit: "Package Unit"
+        case .miniSplit: "Mini-Split"
+        case .ductlessMiniSplit: "Ductless Mini-Split"
+        case .heatPump: "Heat Pump"
+        case .furnace: "Furnace"
+        case .boiler: "Boiler"
+        case .geothermal: "Geothermal"
+        case .ptac: "PTAC"
+        case .vrf: "VRF System"
         case .other: "Other"
         }
     }
 }
 
-// MARK: - Bottom Conditions
+// MARK: - Service Type
 
-enum BottomCondition: String, Codable, CaseIterable, Identifiable {
-    case sand
-    case mud
-    case rock
-    case coquina
-    case clay
-    case mixed
-    case unknown
+enum ServiceType: String, Codable, CaseIterable, Identifiable {
+    case newInstall
+    case replacement
+    case repair
+    case maintenance
+    case inspection
+    case ductCleaning
+    case retrofit
+    case other
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .sand: "Sand"
-        case .mud: "Mud / Silt"
-        case .rock: "Rock"
-        case .coquina: "Coquina"
-        case .clay: "Clay"
-        case .mixed: "Mixed"
-        case .unknown: "Unknown"
+        case .newInstall: "New Installation"
+        case .replacement: "Replacement"
+        case .repair: "Repair"
+        case .maintenance: "Maintenance"
+        case .inspection: "Inspection"
+        case .ductCleaning: "Duct Cleaning"
+        case .retrofit: "Retrofit / Upgrade"
+        case .other: "Other"
         }
     }
 }
 
-// MARK: - Site Access
+// MARK: - Property Type
 
-enum SiteAccess: String, Codable, CaseIterable, Identifiable {
-    case landOnly
-    case waterOnly
-    case both
-    case bargeRequired
+enum PropertyType: String, Codable, CaseIterable, Identifiable {
+    case residential
+    case commercial
+    case multiFamily
+    case industrial
+    case newConstruction
+    case other
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .landOnly: "Land Access Only"
-        case .waterOnly: "Water Access Only"
-        case .both: "Land + Water Access"
-        case .bargeRequired: "Barge Required"
+        case .residential: "Residential"
+        case .commercial: "Commercial"
+        case .multiFamily: "Multi-Family"
+        case .industrial: "Industrial"
+        case .newConstruction: "New Construction"
+        case .other: "Other"
         }
     }
 }
@@ -201,8 +211,8 @@ enum PaymentTerms: String, Codable, CaseIterable, Identifiable {
     case net30
     case net45
     case net60
-    case thirdThirdThird  // Common in marine: 1/3 deposit, 1/3 midpoint, 1/3 completion
     case fiftyFifty        // 50% deposit, 50% completion
+    case thirdThirdThird   // 1/3 deposit, 1/3 midpoint, 1/3 completion
 
     var id: String { rawValue }
 
@@ -213,8 +223,8 @@ enum PaymentTerms: String, Codable, CaseIterable, Identifiable {
         case .net30: "Net 30"
         case .net45: "Net 45"
         case .net60: "Net 60"
-        case .thirdThirdThird: "1/3 Deposit, 1/3 Midpoint, 1/3 Completion"
         case .fiftyFifty: "50% Deposit, 50% Completion"
+        case .thirdThirdThird: "1/3 Deposit, 1/3 Midpoint, 1/3 Completion"
         }
     }
 }
@@ -319,59 +329,31 @@ enum SyncEntityType: String, Codable {
 // MARK: - Saved Item Category
 
 enum ItemCategory: String, Codable, CaseIterable, Identifiable {
-    case pilings
-    case decking
-    case framing
-    case seawall
-    case boatLift
+    case equipment
+    case ductwork
+    case refrigerant
     case electrical
-    case accessories
+    case controls
+    case insulation
     case permits
     case labor
-    case siteWork
+    case materials
     case other
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .pilings: "Pilings"
-        case .decking: "Decking"
-        case .framing: "Framing"
-        case .seawall: "Seawall"
-        case .boatLift: "Boat Lift"
+        case .equipment: "Equipment"
+        case .ductwork: "Ductwork"
+        case .refrigerant: "Refrigerant & Piping"
         case .electrical: "Electrical"
-        case .accessories: "Accessories"
-        case .permits: "Permits & Engineering"
+        case .controls: "Controls & Thermostats"
+        case .insulation: "Insulation"
+        case .permits: "Permits & Inspection"
         case .labor: "Labor"
-        case .siteWork: "Site Work"
+        case .materials: "Materials & Supplies"
         case .other: "Other"
-        }
-    }
-}
-
-// MARK: - Seawall Type
-
-enum SeawallType: String, Codable, CaseIterable, Identifiable {
-    case vinyl
-    case concrete
-    case steel
-    case ripRap
-    case wood
-    case none
-    case unknown
-
-    var id: String { rawValue }
-
-    var displayName: String {
-        switch self {
-        case .vinyl: "Vinyl Sheet Pile"
-        case .concrete: "Concrete"
-        case .steel: "Steel Sheet Pile"
-        case .ripRap: "Rip Rap"
-        case .wood: "Wood"
-        case .none: "No Seawall"
-        case .unknown: "Unknown"
         }
     }
 }
@@ -418,42 +400,3 @@ enum PermitStatus: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-// MARK: - Permit Jurisdiction
-
-enum PermitJurisdiction: String, Codable, CaseIterable, Identifiable {
-    case leeCounty
-    case charlotteCounty
-    case collierCounty
-    case sarasotaCounty
-    case manateeCounty
-    case hillsboroughCounty
-    case pinellasCounty
-    case brevardCounty
-    case duvalCounty
-    case palmBeachCounty
-    case browardCounty
-    case miamiDadeCounty
-    case otherFL
-    case outOfState
-
-    var id: String { rawValue }
-
-    var displayName: String {
-        switch self {
-        case .leeCounty: "Lee County"
-        case .charlotteCounty: "Charlotte County"
-        case .collierCounty: "Collier County"
-        case .sarasotaCounty: "Sarasota County"
-        case .manateeCounty: "Manatee County"
-        case .hillsboroughCounty: "Hillsborough County"
-        case .pinellasCounty: "Pinellas County"
-        case .brevardCounty: "Brevard County"
-        case .duvalCounty: "Duval County"
-        case .palmBeachCounty: "Palm Beach County"
-        case .browardCounty: "Broward County"
-        case .miamiDadeCounty: "Miami-Dade County"
-        case .otherFL: "Other FL County"
-        case .outOfState: "Out of State"
-        }
-    }
-}

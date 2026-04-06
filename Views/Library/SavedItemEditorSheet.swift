@@ -19,7 +19,7 @@ struct SavedItemEditorSheet: View {
         NavigationStack {
             Form {
                 Section("Item Details") {
-                    TextField("Description (e.g. 12\" Round Piling)", text: $itemDescription)
+                    TextField("Description (e.g. 3-Ton Condenser)", text: $itemDescription)
                     Picker("Category", selection: $category) {
                         ForEach(ItemCategory.allCases) { cat in
                             Text(cat.displayName).tag(cat)
