@@ -7,9 +7,11 @@ struct InvoiceDetailView: View {
     @Environment(SyncCoordinator.self) private var syncCoordinator: SyncCoordinator?
     @Environment(ProTierService.self) private var proTierService: ProTierService?
     @Query private var profiles: [BusinessProfile]
+    @Query private var customers: [Customer]
     @State private var showingRecordPayment = false
     @State private var showingShareSheet = false
     @State private var showingSendToCustomer = false
+    @State private var showingCustomerPicker = false
     @State private var pdfData: Data?
 
     var body: some View {
@@ -78,6 +80,9 @@ struct InvoiceDetailView: View {
                 )
             }
         }
+        .sheet(isPresented: $showingCustomerPicker) {
+            InvoiceCustomerPickerSheet(customers: customers, invoice: invoice)
+        }
     }
 
     private var headerSection: some View {
@@ -129,14 +134,26 @@ struct InvoiceDetailView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(customer.name).font(.body.bold())
                     if !customer.phone.isEmpty {
-                        Text(customer.phone).font(.caption).foregroundStyle(.secondary)
+                        HStack(spacing: 4) {
+                            Image(systemName: "phone.fill").font(.caption2)
+                            Text(customer.phone)
+                        }
+                        .font(.caption).foregroundStyle(.secondary)
                     }
                     if !customer.email.isEmpty {
-                        Text(customer.email).font(.caption).foregroundStyle(.secondary)
+                        HStack(spacing: 4) {
+                            Image(systemName: "envelope.fill").font(.caption2)
+                            Text(customer.email)
+                        }
+                        .font(.caption).foregroundStyle(.secondary)
+                    }
+                    if !customer.address.isEmpty {
+                        Text(customer.address).font(.caption).foregroundStyle(.secondary)
                     }
                 }
+                Button("Change Customer") { showingCustomerPicker = true }
             } else {
-                Text("No Customer").foregroundStyle(.secondary)
+                Button("Add Customer") { showingCustomerPicker = true }
             }
         }
     }

@@ -52,7 +52,7 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        NSContactsUsageDescription: "MMCC uses your contact card to auto-fill your business info during setup."
+        NSContactsUsageDescription: "MMCC uses your contacts to quickly add customers for proposals and invoices."
         CFBundleDisplayName: MMCC
     settings:
       base:
