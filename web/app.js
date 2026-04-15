@@ -38,7 +38,22 @@ const fmt = {
   usd(n) { return '$' + Number(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); },
   date(d) { if (!d) return ''; const dt = new Date(d); return dt.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); },
   invNum(n) { return 'INV-' + String(n).padStart(3, '0'); },
+  dueDate(inv) {
+    if (!inv.sentAt) return null;
+    const sent = new Date(inv.sentAt);
+    const terms = inv.paymentTerms || 'Due on Receipt';
+    const days = terms === 'Net 15' ? 15 : terms === 'Net 30' ? 30 : terms === 'Net 45' ? 45 : terms === 'Net 60' ? 60 : 0;
+    if (days === 0) return sent;
+    return new Date(sent.getTime() + days * 86400000);
+  },
+  isOverdue(inv) {
+    if (inv.status === 'paid' || inv.status === 'void' || inv.status === 'draft') return false;
+    const due = this.dueDate(inv);
+    return due && due < new Date();
+  },
 };
+
+const PAYMENT_TERMS = ['Due on Receipt','Net 15','Net 30','Net 45','Net 60','50/50','1/3-1/3-1/3'];
 
 // ─── Calc Helpers ───
 function calcSection(sec) {
@@ -353,8 +368,11 @@ const App = {
   },
 
   // ─── Invoice List ───
+  _invoiceFilter: 'all',
+  _invoiceSearch: '',
+
   renderInvoiceList() {
-    const invoices = DB.getInvoices().sort((a,b) => b.number - a.number);
+    let invoices = DB.getInvoices().sort((a,b) => b.number - a.number);
     if (!invoices.length) {
       return `
         <div class="empty-state">
@@ -364,20 +382,60 @@ const App = {
           <button class="btn btn-primary" style="max-width:220px" onclick="App.push('templatePicker')">New Invoice</button>
         </div>`;
     }
+
+    // Filter
+    if (this._invoiceFilter !== 'all') {
+      if (this._invoiceFilter === 'overdue') {
+        invoices = invoices.filter(i => fmt.isOverdue(i));
+      } else {
+        invoices = invoices.filter(i => i.status === this._invoiceFilter);
+      }
+    }
+
+    // Search
+    if (this._invoiceSearch) {
+      const q = this._invoiceSearch.toLowerCase();
+      invoices = invoices.filter(inv => {
+        const cust = inv.customerId ? DB.getCustomers().find(x => x.id === inv.customerId) : null;
+        return fmt.invNum(inv.number).toLowerCase().includes(q) || (cust && cust.name.toLowerCase().includes(q)) || (inv.jobAddress||'').toLowerCase().includes(q);
+      });
+    }
+
+    const filters = ['all','draft','sent','partiallyPaid','paid','overdue','void'];
+    const filterLabels = { all:'All', draft:'Draft', sent:'Sent', partiallyPaid:'Partial', paid:'Paid', overdue:'Overdue', void:'Void' };
+
     let html = '<div style="padding-top:12px">';
+
+    // Search bar
+    html += `<div class="form-group" style="margin-bottom:8px"><div class="form-row"><input type="search" placeholder="Search invoices..." value="${this._invoiceSearch}" oninput="App._invoiceSearch=this.value;App.render()" style="text-align:left"></div></div>`;
+
+    // Filter chips
+    html += '<div style="display:flex;gap:6px;overflow-x:auto;padding:4px 0 12px;-webkit-overflow-scrolling:touch">';
+    filters.forEach(f => {
+      const active = this._invoiceFilter === f;
+      html += `<button style="flex-shrink:0;padding:6px 12px;border-radius:20px;border:none;font-size:12px;font-weight:500;cursor:pointer;background:${active?'var(--amber)':'var(--card)'};color:${active?'#fff':'var(--text2)'}" onclick="App._invoiceFilter='${f}';App.render()">${filterLabels[f]}</button>`;
+    });
+    html += '</div>';
+
+    if (!invoices.length) {
+      html += '<div class="text-center text-muted" style="padding:40px 0">No invoices match this filter</div>';
+    }
+
     invoices.forEach(inv => {
       const c = calcInvoice(inv);
       const cust = inv.customerId ? DB.getCustomers().find(x => x.id === inv.customerId) : null;
+      const overdue = fmt.isOverdue(inv);
+      const due = fmt.dueDate(inv);
       html += `
-        <div class="card" style="cursor:pointer" onclick="App.viewInvoice('${inv.id}')">
+        <div class="card" style="cursor:pointer;${overdue?'border-left:3px solid var(--red)':''}" onclick="App.viewInvoice('${inv.id}')">
           <div class="card-header">
             <span class="card-number">${fmt.invNum(inv.number)}</span>
-            <span class="badge badge-${inv.status}">${inv.status}</span>
+            <span class="badge badge-${overdue?'overdue':inv.status}">${overdue?'overdue':inv.status}</span>
           </div>
           <div style="font-size:15px;font-weight:600;">${cust ? cust.name : 'No Customer'}</div>
           <div style="display:flex;justify-content:space-between;margin-top:6px;">
-            <span class="text-small text-muted">${fmt.date(inv.createdAt)}</span>
-            <span class="fw-bold mono">${fmt.usd(c.due > 0 ? c.due : c.total)}</span>
+            <span class="text-small text-muted">${fmt.date(inv.createdAt)}${due && inv.status!=='paid' && inv.status!=='void' ? ' · Due '+fmt.date(due) : ''}</span>
+            <span class="fw-bold mono ${overdue?'text-red':''}">${fmt.usd(c.due > 0 ? c.due : c.total)}</span>
           </div>
         </div>`;
     });
@@ -453,12 +511,21 @@ const App = {
         ${inv.notes ? `<div class="form-group-title">NOTES</div><div class="card text-small">${inv.notes.replace(/\n/g,'<br>')}</div>` : ''}
         ${inv.terms ? `<div class="form-group-title">TERMS</div><div class="card text-small text-muted">${inv.terms.replace(/\n/g,'<br>')}</div>` : ''}
 
-        <div class="form-group mt-16" style="border-radius:var(--radius);overflow:hidden">
-          <button class="btn-action" onclick="App.shareInvoice('${inv.id}')">📤 Send / Share Invoice</button>
+        <div class="form-group-title">STATUS</div>
+        <div class="form-group" style="overflow:hidden">
+          <div class="form-row" style="gap:6px;flex-wrap:wrap;justify-content:center;padding:12px 16px">
+            ${['draft','sent','partiallyPaid','paid','void'].map(s => `<button style="padding:6px 14px;border-radius:20px;border:1px solid ${inv.status===s?'var(--amber)':'var(--border)'};background:${inv.status===s?'var(--amber)':'var(--card)'};color:${inv.status===s?'#fff':'var(--text2)'};font-size:12px;font-weight:600;cursor:pointer" onclick="App.setInvoiceStatus('${inv.id}','${s}')">${s==='partiallyPaid'?'Partial':s}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="form-group-title">ACTIONS</div>
+        <div class="form-group" style="border-radius:var(--radius);overflow:hidden">
+          <button class="btn-action" onclick="App.emailInvoice('${inv.id}')">📧 Email Invoice</button>
+          <button class="btn-action" onclick="App.shareInvoice('${inv.id}')">📤 Share Invoice</button>
           <button class="btn-action" onclick="App.printInvoice('${inv.id}')">🖨 Print / Save PDF</button>
           <button class="btn-action" onclick="App.recordPayment('${inv.id}')">💰 Record Payment</button>
           <button class="btn-action" onclick="App.editInvoice('${inv.id}')">✏️ Edit Invoice</button>
-          ${inv.status==='draft'?`<button class="btn-action" onclick="App.markSent('${inv.id}')">📬 Mark as Sent</button>`:''}
+          <button class="btn-action" onclick="App.duplicateInvoice('${inv.id}')">📋 Duplicate Invoice</button>
           <button class="btn-action" style="color:var(--red)" onclick="if(confirm('Delete this invoice?')){DB.deleteInvoice('${inv.id}');App.pop();}">🗑 Delete Invoice</button>
         </div>
       </div>`;
@@ -474,23 +541,100 @@ const App = {
     if (inv) { inv.status = 'sent'; inv.sentAt = new Date().toISOString(); DB.updateInvoice(inv); this.render(); }
   },
 
+  setInvoiceStatus(id, status) {
+    const inv = DB.getInvoice(id);
+    if (!inv) return;
+    inv.status = status;
+    if (status === 'sent' && !inv.sentAt) inv.sentAt = new Date().toISOString();
+    DB.updateInvoice(inv);
+    this.render();
+  },
 
-  // ─── Share & Print ───
+  duplicateInvoice(id) {
+    const orig = DB.getInvoice(id);
+    if (!orig) return;
+    const copy = JSON.parse(JSON.stringify(orig));
+    delete copy.id;
+    copy.status = 'draft';
+    copy.payments = [];
+    copy.sentAt = null;
+    const newInv = DB.addInvoice(copy);
+    this.viewInvoice(newInv.id);
+  },
+
+  // ─── Share, Email & Print ───
+  _buildInvoiceText(inv) {
+    const c = calcInvoice(inv);
+    const cust = inv.customerId ? DB.getCustomers().find(x => x.id === inv.customerId) : null;
+    const profile = DB.getProfile();
+    const biz = profile.businessName || 'MMCC';
+    const addr = [profile.street, profile.city, profile.state, profile.zip].filter(Boolean).join(', ');
+
+    let text = `INVOICE ${fmt.invNum(inv.number)}\n`;
+    text += `From: ${biz}\n`;
+    if (addr) text += `${addr}\n`;
+    if (profile.phone) text += `${profile.phone}\n`;
+    text += `Date: ${fmt.date(inv.createdAt)}\n`;
+    if (inv.paymentTerms) text += `Terms: ${inv.paymentTerms}\n`;
+    text += `\n`;
+    if (cust) {
+      text += `Bill To: ${cust.name}\n`;
+      if (cust.email) text += `${cust.email}\n`;
+      if (cust.phone) text += `${cust.phone}\n`;
+      if (cust.address) text += `${cust.address}\n`;
+      text += `\n`;
+    }
+    if (inv.jobAddress) text += `Job Site: ${inv.jobAddress}\n\n`;
+
+    (inv.sections||[]).forEach(sec => {
+      text += `--- ${sec.name.toUpperCase()} ---\n`;
+      (sec.items||[]).forEach(it => {
+        const lt = (Number(it.qty)||0)*(Number(it.price)||0);
+        text += `  ${it.desc} — ${it.qty} ${it.unit} × ${fmt.usd(it.price)} = ${fmt.usd(lt)}\n`;
+      });
+      text += `  Section Total: ${fmt.usd(calcSection(sec))}\n\n`;
+    });
+
+    text += `Subtotal: ${fmt.usd(c.subtotal)}\n`;
+    if (c.markupAmt > 0) text += `Markup (${inv.markup}%): ${fmt.usd(c.markupAmt)}\n`;
+    if (c.taxAmt > 0) text += `Tax (${inv.taxRate}%): ${fmt.usd(c.taxAmt)}\n`;
+    text += `TOTAL: ${fmt.usd(c.total)}\n`;
+    if (c.paid > 0) { text += `Paid: (${fmt.usd(c.paid)})\nBALANCE DUE: ${fmt.usd(c.due)}\n`; }
+
+    if (inv.notes) text += `\nNotes:\n${inv.notes}\n`;
+    if (inv.terms) text += `\nTerms:\n${inv.terms}\n`;
+
+    return text;
+  },
+
   shareInvoice(id) {
+    const inv = DB.getInvoice(id);
+    if (!inv) return;
+    const text = this._buildInvoiceText(inv);
+
+    if (navigator.share) {
+      navigator.share({ title: `Invoice ${fmt.invNum(inv.number)}`, text }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(text).then(() => alert('Invoice copied to clipboard')).catch(() => alert(text));
+    }
+  },
+
+  emailInvoice(id) {
     const inv = DB.getInvoice(id);
     if (!inv) return;
     const c = calcInvoice(inv);
     const cust = inv.customerId ? DB.getCustomers().find(x => x.id === inv.customerId) : null;
     const profile = DB.getProfile();
     const biz = profile.businessName || 'MMCC';
-    const text = `Invoice ${fmt.invNum(inv.number)} from ${biz}\nAmount: ${fmt.usd(c.total)}${c.due !== c.total ? '\nBalance Due: '+fmt.usd(c.due) : ''}\n${cust ? 'Customer: '+cust.name : ''}`;
-
-    if (navigator.share) {
-      navigator.share({ title: `Invoice ${fmt.invNum(inv.number)}`, text }).catch(() => {});
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(text).then(() => alert('Invoice details copied to clipboard')).catch(() => alert(text));
-    }
+    const to = cust && cust.email ? cust.email : '';
+    const subject = encodeURIComponent(`Invoice ${fmt.invNum(inv.number)} from ${biz}`);
+    const firstName = cust ? (cust.name.split(' ')[0]) : '';
+    const body = encodeURIComponent(
+      `Hi ${firstName},\n\nPlease find your invoice details below.\n\n` +
+      this._buildInvoiceText(inv) +
+      `\nThank you,\n${biz}`
+    );
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
   },
 
   printInvoice(id) {
@@ -677,11 +821,16 @@ const App = {
             <label>Customer</label>
             <select onchange="App.editingInvoice.customerId=this.value||null">${custOptions}</select>
           </div>
+          <button class="btn-action" onclick="App.quickCreateCustomer()" style="font-size:13px">＋ New Customer</button>
         </div>
 
         <div class="form-group-title">JOB DETAILS</div>
         <div class="form-group">
           <div class="form-row"><label>Address</label><input type="text" value="${(inv.jobAddress||'').replace(/"/g,'&quot;')}" placeholder="Job site address" oninput="App.editingInvoice.jobAddress=this.value"></div>
+          <div class="form-row">
+            <label>Terms</label>
+            <select onchange="App.editingInvoice.paymentTerms=this.value">${PAYMENT_TERMS.map(t => `<option value="${t}" ${(inv.paymentTerms||'Due on Receipt')===t?'selected':''}>${t}</option>`).join('')}</select>
+          </div>
         </div>
 
         <div class="form-group-title">LINE ITEMS</div>
@@ -751,6 +900,16 @@ const App = {
   cancelEdit() {
     this.editingInvoice = null;
     if (this._screenData) { this.screen = 'invoiceView'; } else { this.screen = null; }
+    this.render();
+  },
+
+  quickCreateCustomer() {
+    const name = prompt('Customer name:');
+    if (!name || !name.trim()) return;
+    const phone = prompt('Phone (optional):') || '';
+    const email = prompt('Email (optional):') || '';
+    const cu = DB.addCustomer({ name: name.trim(), phone: phone.trim(), email: email.trim(), address: '', notes: '' });
+    this.editingInvoice.customerId = cu.id;
     this.render();
   },
 
